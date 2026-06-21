@@ -1,0 +1,35 @@
+<div class="login-container">
+  <nz-card class="login-card" nzTitle="CineTrack Login">
+    <form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please input a valid email!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="email" placeholder="Email (e.g. eve.holt@reqres.in)" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please input your Password!">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="Password" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <div nz-row nzJustify="space-between">
+        <div nz-col>
+          <label nz-checkbox formControlName="rememberMe">
+            <span>Remember me</span>
+          </label>
+        </div>
+      </div>
+      
+      <button nz-button class="login-form-button" [nzType]="'primary'" [nzLoading]="isLoading">Log in</button>
+      
+      <div>
+        Or <a routerLink="/register">register now!</a>
+      </div>
+    </form>
+  </nz-card>
+</div>

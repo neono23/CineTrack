@@ -1,0 +1,135 @@
+<nz-layout class="layout">
+  <nz-header>
+    <div class="logo">CineTrack</div>
+    <ul nz-menu nzTheme="dark" nzMode="horizontal">
+      <li nz-menu-item nzSelected>Movies</li>
+      <li nz-menu-item style="float: right;" (click)="logout()">Logout</li>
+    </ul>
+  </nz-header>
+  <nz-content style="padding: 0 50px; margin-top: 24px;">
+    <div style="background: #fff; padding: 24px; min-height: 280px;">
+      
+      <!-- Toolbar -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+        <nz-input-group style="width: 300px;" [nzPrefix]="prefixIconSearch">
+          <input type="text" nz-input placeholder="Search movies..." (input)="onSearch($event)" />
+        </nz-input-group>
+        <ng-template #prefixIconSearch>
+          <nz-icon nzType="search" />
+        </ng-template>
+
+        <button nz-button nzType="primary" (click)="showAddModal()">
+          <nz-icon nzType="plus" /> Add Movie
+        </button>
+      </div>
+
+      <!-- Table -->
+      <nz-table #basicTable [nzData]="filteredMovies()" [nzPageSize]="10">
+        <thead>
+          <tr>
+            <th nzColumnKey="title" [nzSortFn]="true">Title</th>
+            <th nzColumnKey="genre" [nzSortFn]="true">Genre</th>
+            <th nzColumnKey="year" [nzSortFn]="true">Year</th>
+            <th nzColumnKey="rating" [nzSortFn]="true">Rating</th>
+            <th nzColumnKey="status" [nzSortFn]="true">Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (data of basicTable.data; track data.id) {
+            <tr>
+              <td>{{ data.title }}</td>
+              <td>{{ data.genre }}</td>
+              <td>{{ data.year }}</td>
+              <td><nz-rate [ngModel]="data.rating" nzDisabled></nz-rate></td>
+              <td>
+                <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+              </td>
+              <td>
+                <button nz-button nzType="default" nzSize="small" (click)="showReviewModal(data)" style="margin-right: 8px;">
+                  <nz-icon nzType="form" /> Review
+                </button>
+                <button nz-button nzType="primary" nzSize="small" (click)="showEditModal(data)">
+                  <nz-icon nzType="edit" />
+                </button>
+                <button nz-button nzType="primary" nzDanger nzSize="small" 
+                        nz-popconfirm nzPopconfirmTitle="Are you sure delete this movie?" 
+                        (nzOnConfirm)="deleteMovie(data.id)">
+                  <nz-icon nzType="delete" />
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+
+    </div>
+  </nz-content>
+</nz-layout>
+
+<!-- Add/Edit Modal -->
+<nz-modal [(nzVisible)]="isModalVisible" [nzTitle]="editingMovie ? 'Edit Movie' : 'Add Movie'" 
+          (nzOnCancel)="handleModalCancel()" (nzOnOk)="handleModalOk()">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="movieForm">
+      
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" nzRequired>Title</nz-form-label>
+        <nz-form-control [nzSm]="14" nzErrorTip="Please input the title!">
+          <input nz-input formControlName="title" placeholder="Movie Title" />
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" nzRequired>Genre</nz-form-label>
+        <nz-form-control [nzSm]="14" nzErrorTip="Please select a genre!">
+          <nz-select formControlName="genre" nzPlaceHolder="Select Genre">
+            @for (genre of genreOptions; track genre) {
+              <nz-option [nzValue]="genre" [nzLabel]="genre"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" nzRequired>Year</nz-form-label>
+        <nz-form-control [nzSm]="14" nzErrorTip="Year must be between 1888 and 2025!">
+          <nz-input-number formControlName="year" [nzMin]="1888" [nzMax]="2025" [nzStep]="1"></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" nzRequired>Rating</nz-form-label>
+        <nz-form-control [nzSm]="14" nzErrorTip="Please rate the movie!">
+          <nz-rate formControlName="rating"></nz-rate>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" nzRequired>Status</nz-form-label>
+        <nz-form-control [nzSm]="14" nzErrorTip="Please select a status!">
+          <nz-select formControlName="status" nzPlaceHolder="Select Status">
+            @for (status of statusOptions; track status) {
+              <nz-option [nzValue]="status" [nzLabel]="status"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Review Modal -->
+<nz-modal [(nzVisible)]="isReviewModalVisible" [nzTitle]="'Review for ' + selectedMovieForReview?.title" 
+          (nzOnCancel)="handleReviewModalCancel()" (nzOnOk)="handleReviewModalOk()">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="reviewForm">
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Review cannot exceed 500 characters!">
+          <textarea nz-input formControlName="review" placeholder="Write your review here..." [nzAutosize]="{ minRows: 4, maxRows: 6 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

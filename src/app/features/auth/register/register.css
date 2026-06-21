@@ -1,0 +1,1 @@
+.register-container { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; } .register-card { width: 450px; } .register-form { max-width: 450px; } .register-form-button { width: 100%; margin-top: 16px; margin-bottom: 16px; }

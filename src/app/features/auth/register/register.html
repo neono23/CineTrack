@@ -1,0 +1,71 @@
+<div class="register-container">
+  <nz-card class="register-card" nzTitle="CineTrack Register">
+    <form nz-form [formGroup]="registerForm" class="register-form" (ngSubmit)="submitForm()">
+      
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please input your first name!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="firstName" placeholder="First Name" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please input your last name!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="lastName" placeholder="Last Name" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please input a valid email!">
+          <nz-input-group nzPrefixIcon="mail">
+            <input type="text" nz-input formControlName="email" placeholder="Email (e.g. eve.holt@reqres.in)" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="passwordErrorTpl">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="Password" />
+          </nz-input-group>
+          <ng-template #passwordErrorTpl let-control>
+            @if(control.errors?.['required']) {
+              Please input your password!
+            }
+            @if(control.errors?.['passwordStrength']) {
+              Password must be at least 6 chars, contain upper/lowercase, number & special char.
+            }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="confirmPasswordErrorTpl">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="confirmPassword" placeholder="Confirm Password" />
+          </nz-input-group>
+          <ng-template #confirmPasswordErrorTpl let-control>
+            @if(control.errors?.['required']) {
+              Please confirm your password!
+            }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      
+      @if(registerForm.errors?.['mismatch'] && (registerForm.get('confirmPassword')?.dirty || registerForm.get('confirmPassword')?.touched)) {
+        <div style="color: #ff4d4f; margin-bottom: 16px;">
+          Passwords do not match!
+        </div>
+      }
+      
+      <button nz-button class="register-form-button" [nzType]="'primary'" [nzLoading]="isLoading">Register</button>
+      
+      <div>
+        Already have an account? <a routerLink="/login">Log in!</a>
+      </div>
+    </form>
+  </nz-card>
+</div>
