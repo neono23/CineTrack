@@ -1,0 +1,2 @@
+# CineTrack
+Proiect final Angular
