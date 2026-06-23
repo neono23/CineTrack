@@ -7,6 +7,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
   private router = inject(Router);
+  private message = inject(NzMessageService);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -44,12 +46,13 @@ export class Login {
       ).subscribe({
         next: () => {
           this.isLoading = false;
+          this.message.success('Login reușit');
           this.router.navigate(['/movies']);
         },
         error: (err) => {
           this.isLoading = false;
+          this.message.error(err?.error?.message ?? 'Login failed');
           console.error('Login failed', err);
-          // Show error to user... can use NzMessageService
         }
       });
     } else {

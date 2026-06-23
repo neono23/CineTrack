@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth-guard';
+import { guestGuard } from './core/guards/guest-guard';
 
 export const routes: Routes = [
   {
@@ -9,17 +11,17 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then(m => m.Login),
-    canActivate: [() => import('./core/guards/guest-guard').then(m => m.guestGuard)]
+    canActivate: [guestGuard]
   },
   {
     path: 'register',
     loadComponent: () => import('./features/auth/register/register').then(m => m.Register),
-    canActivate: [() => import('./core/guards/guest-guard').then(m => m.guestGuard)]
+    canActivate: [guestGuard]
   },
   {
     path: 'movies',
     loadComponent: () => import('./features/movies/movie-list/movie-list').then(m => m.MovieList),
-    canActivate: [() => import('./core/guards/auth-guard').then(m => m.authGuard)]
+    canActivate: [authGuard]
   },
   {
     path: '**',

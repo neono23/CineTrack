@@ -6,6 +6,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 // Custom password validator
 export function passwordValidator(): ValidatorFn {
@@ -48,6 +49,7 @@ export class Register {
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
   private router = inject(Router);
+  private message = inject(NzMessageService);
 
   registerForm: FormGroup = this.fb.group({
     firstName: ['', [Validators.required]],
@@ -71,10 +73,12 @@ export class Register {
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
           this.isLoading = false;
-          this.router.navigate(['/movies']);
+          this.message.success('Cont creat cu succes');
+          this.router.navigate(['/login']);
         },
         error: (err) => {
           this.isLoading = false;
+          this.message.error(err?.error?.message ?? 'Registration failed');
           console.error('Registration failed', err);
         }
       });
