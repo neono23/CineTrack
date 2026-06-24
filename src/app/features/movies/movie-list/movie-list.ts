@@ -81,7 +81,7 @@ export class MovieList {
   movieForm: FormGroup = this.fb.group({
     title: ['', [Validators.required]],
     genre: ['', [Validators.required]],
-    year: [new Date().getFullYear(), [Validators.required, Validators.min(1888), Validators.max(2025)]],
+    year: [new Date().getFullYear(), [Validators.required, Validators.min(1888), Validators.max(2026)]],
     rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
     status: ['De văzut', [Validators.required]]
   });
