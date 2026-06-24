@@ -27,11 +27,11 @@
       <nz-table #basicTable [nzData]="filteredMovies()" [nzPageSize]="10">
         <thead>
           <tr>
-            <th nzColumnKey="title" [nzSortFn]="true">Title</th>
-            <th nzColumnKey="genre" [nzSortFn]="true">Genre</th>
-            <th nzColumnKey="year" [nzSortFn]="true">Year</th>
-            <th nzColumnKey="rating" [nzSortFn]="true">Rating</th>
-            <th nzColumnKey="status" [nzSortFn]="true">Status</th>
+            <th nzColumnKey="title" [nzSortFn]="true" (nzSortOrderChange)="sortMovies({key: 'title', value: $event})">Title</th>
+            <th nzColumnKey="genre" [nzSortFn]="true" (nzSortOrderChange)="sortMovies({key: 'genre', value: $event})">Genre</th>
+            <th nzColumnKey="year" [nzSortFn]="true" (nzSortOrderChange)="sortMovies({key: 'year', value: $event})">Year</th>
+            <th nzColumnKey="rating" [nzSortFn]="true" (nzSortOrderChange)="sortMovies({key: 'rating', value: $event})">Rating</th>
+            <th nzColumnKey="status" [nzSortFn]="true" (nzSortOrderChange)="sortMovies({key: 'status', value: $event})">Status</th>
             <th>Actions</th>
           </tr>
         </thead>

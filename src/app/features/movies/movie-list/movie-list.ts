@@ -49,10 +49,10 @@ export class MovieList {
   public authService = inject(Auth);
   private fb = inject(FormBuilder);
 
-  // Search logic utilizing signals
   searchTerm = signal('');
+  sortKey = signal<string | null>(null);
+  sortDirection = signal<'asc' | 'desc' | null>(null);
   
-  // Computed property to filter and optionally sort movies using Lodash
   filteredMovies = computed(() => {
     let movies = this.movieService.movies();
     const term = this.searchTerm().toLowerCase();
@@ -64,12 +64,15 @@ export class MovieList {
       );
     }
     
+    const key = this.sortKey();
+    const dir = this.sortDirection();
+    if (key && dir) {
+      movies = _.orderBy(movies, [key], [dir]);
+    }
+    
     return movies;
-    // We could use lodash here for sorting if we were storing sort state in signals
-    // as well. E.g., return _.orderBy(movies, [sortColumn], [sortOrder]);
   });
 
-  // Modal logic
   isModalVisible = false;
   isReviewModalVisible = false;
   editingMovie: Movie | null = null;
@@ -90,7 +93,6 @@ export class MovieList {
   statusOptions = ['Văzut', 'De văzut', 'În progres'];
   genreOptions = ['Acțiune', 'Comedie', 'Horror', 'Dramă', 'Sci-Fi', 'Thriller', 'Animație'];
 
-  // Map status to tag color
   getStatusColor(status: string): string {
     switch(status) {
       case 'Văzut': return 'green';
@@ -156,13 +158,13 @@ export class MovieList {
   }
 
   // Sorting
-  // We use lodash _.orderBy for the sorting behavior of NgZorro
   sortMovies(sort: { key: string; value: string | null }): void {
     if (sort.key && sort.value) {
-      // In a real app we'd update a sortSignal, but for NgZorro table
-      // it might modify the list. To be safe, we'll sort the output
-      // of the movieService using lodging
-      // For NgZorro, since it's client side, we usually provide the sort fn in the template
+      this.sortKey.set(sort.key);
+      this.sortDirection.set(sort.value === 'ascend' ? 'asc' : 'desc');
+    } else {
+      this.sortKey.set(null);
+      this.sortDirection.set(null);
     }
   }
 
